@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "rsvp": "RSVP",
+    "loveStory": "Nuestra historia"
+  },
+  "home": {
+    "subtitle": "Sitio de boda",
+    "welcome": "Bienvenidos a nuestra celebración.",
+    "cta": "Explorar la historia"
+  },
+  "common": {
+    "language": "Idioma",
+    "comingSoon": "Próximamente"
+  }
+}

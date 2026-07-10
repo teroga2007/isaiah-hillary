@@ -1,0 +1,20 @@
+{
+  "siteTitle": "Isaiah + Hillary",
+  "pages": {
+    "home": {
+      "eyebrow": "A wedding weekend",
+      "headline": "A quiet, modern celebration shaped with intention.",
+      "description": "A refined space for our story, the details, and the moments we will share with the people we love."
+    },
+    "rsvp": {
+      "eyebrow": "RSVP",
+      "headline": "We would love to celebrate with you.",
+      "description": "A formal RSVP experience will live here. For now, this page marks the place where guests will confirm attendance and share any needed details."
+    },
+    "love-story": {
+      "eyebrow": "Love Story",
+      "headline": "A few chapters from the beginning to this yes.",
+      "description": "This section will hold your timeline, photos, and the small moments that shaped the relationship into a wedding day."
+    }
+  }
+}

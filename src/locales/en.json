@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "home": "Home",
+    "rsvp": "RSVP",
+    "loveStory": "Love Story"
+  },
+  "home": {
+    "subtitle": "Wedding website",
+    "welcome": "Welcome to our celebration.",
+    "cta": "Explore the story"
+  },
+  "common": {
+    "language": "Language",
+    "comingSoon": "Coming soon"
+  }
+}
