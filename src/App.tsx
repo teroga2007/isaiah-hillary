@@ -1,133 +1,66 @@
-import { useTranslation } from "react-i18next";
+import { useState, type FormEvent } from "react";
 import { useAppContext } from "./context/AppContext";
 
+const mapUrl = "https://maps.app.goo.gl/2kppx7BY9YVrrv3p9?g_st=ic";
+const registryUrl = "https://www.amazon.com/wedding/share/hillaryandisaiah";
+const weddingAsset = (filename: string) => `${import.meta.env.BASE_URL}wedding/${filename}`;
+
+const content = {
+  en: {
+    nav: ["Details", "Our story", "Dress code", "RSVP"], weddingOf: "The wedding of", date: "June 11, 2027", lake: "White Meadow Lake, NJ",
+    celebration: "A lakeside celebration", detailsTitle: <>A day made for<br /><em>the people we love.</em></>, detailsText: "Join us for a warm and timeless evening by the water as we celebrate the beginning of our next chapter.", when: "When", where: "Where", friday: "Friday, June 11", time: "2027 · 5:00 PM", venue: "White Meadow Lake", venueDetail: "Country Club · Rockaway, NJ", maps: "Open in maps",
+    storyLabel: "Our story", storyTitle: <>It started with<br /><em>a quiet prayer.</em></>, storyQuote: "“This story starts way before their first exchange of words.”", story: ["Freshman year, the first time Isaiah saw Hillary, he thought: “wow, she is beautiful.” Not quite ready to say hello, he made a prayer: if it was meant to be, they would cross paths in high school.", "Nearly four years later, with a little help from their friends Nico and his then-girlfriend, they finally met. At first it was only “hi” and “bye,” but there was a spark eager to be fed.", "Then came prom. Between flirting and small talk, Isaiah found the confidence to send Hillary a late-night DM asking for photos from the night. They texted for hours, then days, weeks, and months—until he finally asked her to be his girlfriend."],
+    dressLabel: "Dress code", dressTitle: <>Lakeside<br /><em>elegance.</em></>, dressLead: "We invite our guests to dress in sunset tones inspired by the natural beauty of the lake.", dressText: "Please join us in elevated neutrals and earthy shades: beige, tan, taupe, caramel, mocha, and chocolate. We kindly ask that guests avoid white and ivory.",
+    giftLabel: "With love", giftTitle: <>Your presence is<br /><em>the greatest gift.</em></>, giftText: "For those who would like to honor us with a gift, we have created a registry to help us begin our home together.", registry: "View our registry",
+    rsvpLabel: "RSVP", rsvpTitle: <>We can’t wait to<br /><em>celebrate with you.</em></>, rsvpIntro: "Please reply by", deadline: "May 1, 2027", name: "Full name", email: "Email address", attendance: "Will you be joining us?", yes: "Joyfully accepts", no: "Regretfully declines", guests: "Number of guests", dietary: "Dietary restrictions or allergies", message: "A note for the couple (optional)", submit: "Send RSVP", sending: "Sending…", thankYou: "Thank you for your response.", thankYouText: "We’re so happy to celebrate this season with you.", retry: "We couldn’t send your response. Please try again.", guestsOne: "Just me", guestsTwo: "Me + 1", guestsThree: "Me + 2", language: "ES", back: "Back to top"
+  },
+  es: {
+    nav: ["Detalles", "Nuestra historia", "Código de vestimenta", "RSVP"], weddingOf: "La boda de", date: "11 de junio de 2027", lake: "White Meadow Lake, NJ",
+    celebration: "Una celebración junto al lago", detailsTitle: <>Un día creado para<br /><em>las personas que amamos.</em></>, detailsText: "Acompáñanos a una velada cálida y atemporal junto al agua mientras celebramos el comienzo de nuestro próximo capítulo.", when: "Cuándo", where: "Dónde", friday: "Viernes, 11 de junio", time: "2027 · 5:00 PM", venue: "White Meadow Lake", venueDetail: "Country Club · Rockaway, NJ", maps: "Abrir en Maps",
+    storyLabel: "Nuestra historia", storyTitle: <>Todo comenzó con<br /><em>una pequeña oración.</em></>, storyQuote: "“Esta historia comenzó mucho antes de que intercambiaran sus primeras palabras.”", story: ["En primer año de secundaria, la primera vez que Isaiah vio a Hillary pensó: «wow, ella es hermosa». Sin reunir todavía el valor para hablarle, hizo una oración: si estaba destinado a ser, se encontrarían en la secundaria.", "Casi cuatro años después, con un poco de ayuda de su amigo de siempre Nico y su entonces novia, por fin se conocieron. Al principio solo era «hola» y «adiós», pero había una chispa esperando crecer.", "Luego llegó el baile de graduación. Entre coqueteos y conversaciones, Isaiah reunió el valor para enviarle a Hillary un mensaje después de medianoche preguntándole por las fotos de la noche. Hablaron por horas, después días, semanas y meses, hasta que finalmente le pidió ser su novia."],
+    dressLabel: "Código de vestimenta", dressTitle: <>Elegancia<br /><em>junto al lago.</em></>, dressLead: "Invitamos a nuestros invitados a vestir tonos de atardecer inspirados en la belleza natural del lago.", dressText: "Acompáñanos con neutrales elevados y tonos tierra: beige, tostado, taupe, caramelo, moka y chocolate. Les pedimos amablemente evitar el blanco y marfil.",
+    giftLabel: "Con cariño", giftTitle: <>Su presencia es<br /><em>el mejor regalo.</em></>, giftText: "Para quienes deseen honrarnos con un regalo, hemos creado un registro para ayudarnos a comenzar nuestro hogar juntos.", registry: "Ver nuestro registro",
+    rsvpLabel: "RSVP", rsvpTitle: <>Estamos deseando<br /><em>celebrar contigo.</em></>, rsvpIntro: "Por favor responde antes del", deadline: "1 de mayo de 2027", name: "Nombre completo", email: "Correo electrónico", attendance: "¿Nos acompañarás?", yes: "Acepto con alegría", no: "Lamentablemente no podré asistir", guests: "Número de invitados", dietary: "Restricciones alimentarias o alergias", message: "Un mensaje para los novios (opcional)", submit: "Enviar RSVP", sending: "Enviando…", thankYou: "Gracias por tu respuesta.", thankYouText: "Nos hace mucha ilusión celebrar esta etapa contigo.", retry: "No pudimos enviar tu respuesta. Inténtalo nuevamente.", guestsOne: "Solo yo", guestsTwo: "Yo + 1", guestsThree: "Yo + 2", language: "EN", back: "Volver arriba"
+  }
+};
+
 function App() {
-  const { t } = useTranslation();
-  const { siteTitle, locale, setLocale, currentPage, navigateTo, pages } = useAppContext();
-  const pageContent = pages[currentPage];
-  const isHome = currentPage === "home";
+  const { siteTitle, locale, setLocale } = useAppContext();
+  const c = content[locale];
+  const [submission, setSubmission] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const scrollTo = (id: string) => document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  return (
-    <main className="min-h-screen bg-base-100 text-base-content">
-      <div className="mx-auto flex min-h-screen max-w-7xl flex-col px-6 pb-10 pt-6 md:px-10 md:pb-16 md:pt-8">
-        <header className="flex flex-col gap-6 border-b border-base-300/70 pb-6 md:flex-row md:items-center md:justify-between">
-          <button
-            className="font-display text-left text-3xl tracking-[-0.04em] text-base-content transition-opacity hover:opacity-70 md:text-4xl"
-            onClick={() => navigateTo("home")}
-            type="button"
-          >
-            {siteTitle}
-          </button>
+  async function submitRsvp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmission("sending");
+    const form = event.currentTarget;
+    const data = new URLSearchParams();
+    new FormData(form).forEach((value, key) => data.set(key, String(value)));
+    const body = data.toString();
+    try {
+      const response = await fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body });
+      if (!response.ok) throw new Error("Submission failed");
+      setSubmission("success");
+      form.reset();
+    } catch {
+      setSubmission("error");
+    }
+  }
 
-          <div className="flex flex-col gap-4 md:items-end">
-            <nav className="flex flex-wrap gap-5 text-sm uppercase tracking-[0.24em] text-base-content/65">
-              <button className={navLinkClass(currentPage === "home")} onClick={() => navigateTo("home")} type="button">
-                {t("nav.home")}
-              </button>
-              <button className={navLinkClass(currentPage === "rsvp")} onClick={() => navigateTo("rsvp")} type="button">
-                {t("nav.rsvp")}
-              </button>
-              <button
-                className={navLinkClass(currentPage === "love-story")}
-                onClick={() => navigateTo("love-story")}
-                type="button"
-              >
-                {t("nav.loveStory")}
-              </button>
-            </nav>
-
-            <div className="flex items-center gap-2 rounded-full border border-base-300 bg-white/70 p-1">
-              <span className="px-3 text-[11px] uppercase tracking-[0.25em] text-base-content/45">
-                {t("common.language")}
-              </span>
-              <button
-                className={localeButtonClass(locale === "en")}
-                onClick={() => setLocale("en")}
-                type="button"
-              >
-                EN
-              </button>
-              <button
-                className={localeButtonClass(locale === "es")}
-                onClick={() => setLocale("es")}
-                type="button"
-              >
-                ES
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <section className="grid flex-1 items-center gap-14 py-14 md:grid-cols-[1.15fr_0.85fr] md:py-20">
-          <div className="space-y-8">
-            <p className="text-xs uppercase tracking-[0.38em] text-base-content/50">
-              {pageContent.eyebrow}
-            </p>
-            <div className="space-y-6">
-              <h1 className="font-display max-w-4xl text-5xl leading-[0.96] tracking-[-0.05em] text-base-content md:text-7xl">
-                {isHome ? siteTitle : pageContent.headline}
-              </h1>
-              <p className="max-w-2xl text-lg leading-8 text-base-content/68 md:text-xl">
-                {isHome ? pageContent.headline : pageContent.description}
-              </p>
-              {isHome ? (
-                <button
-                  className="inline-flex items-center border-b border-base-content pb-1 text-sm uppercase tracking-[0.24em] text-base-content transition-opacity hover:opacity-65"
-                  onClick={() => navigateTo("love-story")}
-                  type="button"
-                >
-                  {t("home.cta")}
-                </button>
-              ) : (
-                <p className="text-xs uppercase tracking-[0.3em] text-base-content/45">
-                  {t("common.comingSoon")}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <aside className="relative overflow-hidden rounded-[2.25rem] border border-white/70 bg-[linear-gradient(145deg,_rgba(191,212,226,0.45),_rgba(244,239,230,0.92)_48%,_rgba(243,180,154,0.38))] p-8 shadow-[0_30px_80px_rgba(143,175,196,0.18)]">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.8),_transparent_35%)]" />
-            <div className="relative space-y-10">
-              <div className="space-y-3">
-                <p className="text-xs uppercase tracking-[0.35em] text-base-content/45">
-                  {t("home.subtitle")}
-                </p>
-                <p className="font-display text-3xl leading-tight tracking-[-0.04em] text-base-content md:text-4xl">
-                  {isHome ? pageContent.description : siteTitle}
-                </p>
-              </div>
-
-              <div className="grid gap-4 text-sm text-base-content/60 md:grid-cols-2">
-                <div className="rounded-[1.5rem] bg-white/60 p-5 backdrop-blur-sm">
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-base-content/40">01</p>
-                  <p>{t("nav.home")}</p>
-                </div>
-                <div className="rounded-[1.5rem] bg-white/60 p-5 backdrop-blur-sm">
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-base-content/40">02</p>
-                  <p>{t("nav.rsvp")}</p>
-                </div>
-                <div className="rounded-[1.5rem] bg-white/60 p-5 backdrop-blur-sm md:col-span-2">
-                  <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-base-content/40">03</p>
-                  <p>{t("nav.loveStory")}</p>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </section>
-      </div>
-    </main>
-  );
-}
-
-function navLinkClass(isActive: boolean) {
-  return `transition-colors hover:text-base-content ${isActive ? "text-base-content" : "text-base-content/55"}`;
-}
-
-function localeButtonClass(isActive: boolean) {
-  return `rounded-full px-3 py-2 text-xs uppercase tracking-[0.22em] transition-colors ${
-    isActive ? "bg-base-content text-base-100" : "text-base-content/60 hover:text-base-content"
-  }`;
+  return <main className="overflow-hidden bg-[#f7f1e7] text-[#4d443b]">
+    <header className="fixed inset-x-0 top-0 z-30 border-b border-[#6c5944]/10 bg-[#f7f1e7]/90 backdrop-blur-md"><div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-10">
+      <button className="font-display text-xl tracking-[0.1em] text-[#5a4634] md:text-2xl" onClick={() => scrollTo("top")}>I <span className="text-[#bca57e]">+</span> H</button>
+      <nav className="hidden items-center gap-7 text-[10px] uppercase tracking-[0.22em] text-[#6c5944]/75 md:flex"><button onClick={() => scrollTo("details")}>{c.nav[0]}</button><button onClick={() => scrollTo("story")}>{c.nav[1]}</button><button onClick={() => scrollTo("dress-code")}>{c.nav[2]}</button><button onClick={() => scrollTo("rsvp")}>{c.nav[3]}</button></nav>
+      <div className="flex items-center gap-3"><button className="text-[10px] uppercase tracking-[.2em] text-[#715e49] underline-offset-4 hover:underline" onClick={() => setLocale(locale === "en" ? "es" : "en")}>{c.language}</button><button className="rounded-full border border-[#81694e] px-4 py-2 text-[10px] uppercase tracking-[0.19em] text-[#5a4634] transition hover:bg-[#5a4634] hover:text-[#f7f1e7]" onClick={() => scrollTo("rsvp")}>RSVP</button></div>
+    </div></header>
+    <section id="top" className="relative isolate min-h-[760px] pt-16 md:min-h-screen md:pt-20"><img className="absolute inset-0 -z-20 h-full w-full object-cover object-center" src={weddingAsset("hero.jpg")} alt="Isaiah and Hillary sharing a moment outdoors" /><div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(39,32,22,.65),rgba(39,32,22,.16)_58%,rgba(39,32,22,.33))]" /><div className="mx-auto flex min-h-[calc(760px-4rem)] max-w-7xl items-end px-5 pb-16 md:min-h-[calc(100vh-5rem)] md:px-10 md:pb-24"><div className="max-w-3xl text-[#fffaf1]"><p className="mb-6 text-[10px] uppercase tracking-[0.42em] text-[#f0debe]">{c.weddingOf}</p><h1 className="font-display text-6xl leading-[0.84] tracking-[-0.055em] sm:text-7xl md:text-9xl">Hillary<br /><em className="font-light">&amp;</em> Isaiah</h1><div className="mt-9 flex flex-wrap gap-x-8 gap-y-3 border-t border-white/40 pt-5 text-xs uppercase tracking-[0.2em] text-[#fff7eb]/90"><span>{c.date}</span><span>{c.lake}</span></div></div></div></section>
+    <section id="details" className="scroll-mt-20 px-5 py-20 md:px-10 md:py-32"><div className="mx-auto grid max-w-6xl gap-14 md:grid-cols-[0.8fr_1.2fr] md:items-center"><div className="relative mx-auto w-full max-w-sm"><div className="absolute -inset-4 border border-[#c7b392]/60" /><img className="relative aspect-[3/4] w-full object-cover" src={weddingAsset("invitation.png")} alt="Wedding invitation with the celebration details" /></div><div className="max-w-xl"><p className="section-label">{c.celebration}</p><h2 className="section-title mt-5">{c.detailsTitle}</h2><p className="mt-7 max-w-lg text-base leading-8 text-[#66594b]">{c.detailsText}</p><div className="mt-10 grid gap-7 border-t border-[#cdbd9f] pt-8 sm:grid-cols-2"><div><p className="detail-label">{c.when}</p><p className="mt-2 font-display text-2xl">{c.friday}</p><p className="mt-1 text-sm text-[#66594b]">{c.time}</p></div><div><p className="detail-label">{c.where}</p><p className="mt-2 font-display text-2xl">{c.venue}</p><p className="mt-1 text-sm text-[#66594b]">{c.venueDetail}</p></div></div><a className="link-arrow mt-10" href={mapUrl} target="_blank" rel="noreferrer">{c.maps} <span>↗</span></a></div></div></section>
+    <section id="story" className="scroll-mt-20 bg-[#e7ddcb] px-5 py-20 md:px-10 md:py-32"><div className="mx-auto max-w-6xl"><div className="mb-14 max-w-2xl"><p className="section-label">{c.storyLabel}</p><h2 className="section-title mt-5">{c.storyTitle}</h2></div><div className="grid gap-8 md:grid-cols-[0.84fr_1.16fr] md:items-start"><img className="h-[430px] w-full object-cover md:h-[600px]" src={weddingAsset("story-1.jpg")} alt="Hillary and Isaiah together" /><div className="md:pt-12"><p className="font-display text-2xl leading-[1.35] text-[#574737] md:text-3xl">{c.storyQuote}</p><div className="mt-8 max-w-xl space-y-5 text-[15px] leading-8 text-[#66594b]">{c.story.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></div></div><div className="mt-8 grid gap-8 sm:grid-cols-2"><img className="h-80 w-full object-cover" src={weddingAsset("story-2.jpg")} alt="A candid moment together" /><img className="h-80 w-full object-cover object-center" src={weddingAsset("gallery-wide.jpg")} alt="Hillary and Isaiah outdoors" /></div></div></section>
+    <section id="dress-code" className="scroll-mt-20 px-5 py-20 md:px-10 md:py-32"><div className="mx-auto grid max-w-6xl gap-12 md:grid-cols-[1.1fr_0.9fr] md:items-center"><div className="order-2 md:order-1"><p className="section-label">{c.dressLabel}</p><h2 className="section-title mt-5">{c.dressTitle}</h2><p className="mt-7 max-w-md text-base leading-8 text-[#66594b]">{c.dressLead}</p><div className="mt-8 flex gap-3"><i className="h-9 w-9 rounded-full bg-[#d9c5a8]" /><i className="h-9 w-9 rounded-full bg-[#b68e5a]" /><i className="h-9 w-9 rounded-full bg-[#836044]" /><i className="h-9 w-9 rounded-full bg-[#3d5b76]" /><i className="h-9 w-9 rounded-full bg-[#657552]" /></div><p className="mt-6 max-w-md text-sm leading-7 text-[#66594b]">{c.dressText}</p></div><img className="order-1 mx-auto w-full max-w-sm border border-[#cdbd9f] p-2 md:order-2" src={weddingAsset("dress-code.png")} alt="Lakeside elegance dress code inspiration" /></div></section>
+    <section className="bg-[#667e91] px-5 py-20 text-[#fff9ed] md:px-10 md:py-28"><div className="mx-auto grid max-w-6xl gap-10 md:grid-cols-[1fr_1fr] md:items-center"><div><p className="text-[10px] uppercase tracking-[0.38em] text-[#e9d6b6]">{c.giftLabel}</p><h2 className="mt-5 font-display text-5xl leading-none tracking-[-0.04em] md:text-6xl">{c.giftTitle}</h2></div><div className="md:justify-self-end"><p className="max-w-md leading-8 text-[#f5ecdf]/85">{c.giftText}</p><a className="link-arrow link-arrow-light mt-8" href={registryUrl} target="_blank" rel="noreferrer">{c.registry} <span>↗</span></a></div></div></section>
+    <section id="rsvp" className="scroll-mt-20 px-5 py-20 md:px-10 md:py-32"><div className="mx-auto max-w-3xl text-center"><p className="section-label">{c.rsvpLabel}</p><h2 className="section-title mt-5">{c.rsvpTitle}</h2><p className="mx-auto mt-7 max-w-lg leading-8 text-[#66594b]">{c.rsvpIntro} <strong className="font-semibold text-[#574737]">{c.deadline}</strong>.</p>{submission === "success" ? <div className="mt-12 border-y border-[#cdbd9f] py-10"><p className="font-display text-3xl text-[#574737]">{c.thankYou}</p><p className="mt-3 text-[#66594b]">{c.thankYouText}</p></div> : <form className="rsvp-form mt-12 text-left" name="rsvp" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={submitRsvp}><input type="hidden" name="form-name" value="rsvp" /><p className="hidden"><label>Don’t fill this out <input name="bot-field" /></label></p><label>{c.name}<input required name="full_name" autoComplete="name" /></label><label>{c.email}<input required name="email" type="email" autoComplete="email" /></label><label>{c.attendance}<select name="attendance" required defaultValue=""><option value="" disabled>—</option><option value="accept">{c.yes}</option><option value="decline">{c.no}</option></select></label><label>{c.guests}<select name="guests" defaultValue="1"><option value="1">{c.guestsOne}</option><option value="2">{c.guestsTwo}</option><option value="3">{c.guestsThree}</option></select></label><label className="md:col-span-2">{c.dietary}<input name="dietary" /></label><label className="md:col-span-2">{c.message}<textarea name="message" rows={4} /></label>{submission === "error" && <p className="md:col-span-2 text-sm text-[#a44d3c]">{c.retry}</p>}<button className="rsvp-submit md:col-span-2" disabled={submission === "sending"}>{submission === "sending" ? c.sending : c.submit}</button></form>}</div></section>
+    <footer className="border-t border-[#cdbd9f] px-5 py-8 md:px-10"><div className="mx-auto flex max-w-7xl items-center justify-between text-[10px] uppercase tracking-[0.2em] text-[#796a5c]"><span>{siteTitle}</span><button onClick={() => scrollTo("top")}>{c.back} ↑</button></div></footer>
+  </main>;
 }
 
 export default App;

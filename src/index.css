@@ -1,33 +1,27 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Manrope:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Italiana&family=Libre+Baskerville:ital,wght@0,400;1,400&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  color: #4e5d68;
-  background-color: #f4efe6;
-  font-family: "Manrope", sans-serif;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-html {
-  background:
-    linear-gradient(180deg, rgba(244, 239, 230, 0.9), rgba(244, 239, 230, 1)),
-    #f4efe6;
-}
-
-body {
-  margin: 0;
-  min-width: 320px;
-}
-
-#root {
-  min-height: 100vh;
-}
-
-::selection {
-  background: rgba(143, 175, 196, 0.3);
-}
+:root { color: #4d443b; background: #f7f1e7; font-family: "DM Sans", sans-serif; text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+html { scroll-behavior: smooth; background: #f7f1e7; }
+body { margin: 0; min-width: 320px; }
+button { cursor: pointer; }
+#root { min-height: 100vh; }
+.font-display { font-family: "Italiana", "Libre Baskerville", serif; }
+.section-label { font-size: 10px; letter-spacing: .36em; line-height: 1.4; text-transform: uppercase; color: #907b60; }
+.section-title { font-family: "Italiana", "Libre Baskerville", serif; font-size: clamp(3.2rem, 7vw, 6rem); line-height: .9; letter-spacing: -.055em; color: #574737; }
+.detail-label { font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: #907b60; }
+.link-arrow { display: inline-flex; align-items: center; gap: .8rem; border-bottom: 1px solid #6c5944; padding-bottom: .35rem; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: #574737; transition: opacity .2s ease; }
+.link-arrow:hover { opacity: .62; }
+.link-arrow span { font-size: 1rem; letter-spacing: 0; }
+.link-arrow-light { border-color: #fff9ed; color: #fff9ed; }
+.rsvp-form { display: grid; gap: 1.25rem; }
+.rsvp-form label { display: grid; gap: .55rem; color: #6c5944; font-size: 10px; letter-spacing: .18em; text-transform: uppercase; }
+.rsvp-form input, .rsvp-form select, .rsvp-form textarea { appearance: none; border: 1px solid #cdbd9f; border-radius: 0; background: rgba(255,255,255,.32); color: #574737; font: 400 15px/1.5 "DM Sans", sans-serif; letter-spacing: normal; padding: .85rem 1rem; text-transform: none; }
+.rsvp-form input:focus, .rsvp-form select:focus, .rsvp-form textarea:focus { outline: 1px solid #667e91; outline-offset: 2px; }
+.rsvp-submit { margin-top: .5rem; border: 1px solid #5a4634; background: #5a4634; color: #fff9ed; padding: 1rem 1.25rem; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; transition: opacity .2s ease; }
+.rsvp-submit:hover:not(:disabled) { opacity: .78; }
+.rsvp-submit:disabled { cursor: wait; opacity: .65; }
+@media (min-width: 768px) { .rsvp-form { grid-template-columns: 1fr 1fr; } }
